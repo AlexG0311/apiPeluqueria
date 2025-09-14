@@ -10,57 +10,64 @@ namespace Api
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            // Agregar variables de entorno (Render/Railway)
+            builder.Configuration.AddEnvironmentVariables();
+
+            // Construir cadena de conexión desde variables de entorno
+            var dbHost = builder.Configuration["DB_HOST"];
+            var dbPort = builder.Configuration["DB_PORT"];
+            var dbName = builder.Configuration["DB_NAME"];
+            var dbUser = builder.Configuration["DB_USER"];
+            var dbPass = builder.Configuration["DB_PASS"];
+
+            var connectionString = $"server={dbHost};port={dbPort};database={dbName};user={dbUser};password={dbPass};";
+
             // Agregar servicios al contenedor
             builder.Services.AddControllers()
                 .AddJsonOptions(options =>
                 {
-                    // Configurar las opciones de serialización JSON para manejar ciclos de referencia y mantener nombres originales
-                    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve; // Evitar ciclos de referenc
-                    options.JsonSerializerOptions.PropertyNamingPolicy = null; // Mantener nombres de propiedad originales
-                    options.JsonSerializerOptions.WriteIndented = true; // Formato legible (opcional)
+                    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+                    options.JsonSerializerOptions.PropertyNamingPolicy = null;
+                    options.JsonSerializerOptions.WriteIndented = true;
                 });
 
-            // Agregar explorador de endpoints y Swagger para documentación
+            // Swagger
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            // Configuración de la base de datos (MySQL)
-            builder.Services.AddDbContext<AppDbContext>(options => options.UseMySql(
-                builder.Configuration.GetConnectionString("ConnectionString"),
-                new MySqlServerVersion(new Version(8, 0, 21))
-            ));
+            // Configuración de la base de datos (MySQL en Railway)
+            builder.Services.AddDbContext<AppDbContext>(options =>
+                options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
+            );
 
-            // Configuración de CORS para permitir todas las solicitudes (útil durante el desarrollo)
+            // Configuración de CORS
             builder.Services.AddCors(options =>
             {
-                options.AddPolicy("AllowAllOrigins", builder =>
+                options.AddPolicy("AllowAllOrigins", policy =>
                 {
-                    builder.AllowAnyOrigin() // Permitir cualquier origen
-                           .AllowAnyMethod() // Permitir cualquier método HTTP
-                           .AllowAnyHeader(); // Permitir cualquier encabezado
+                    policy.AllowAnyOrigin()
+                          .AllowAnyMethod()
+                          .AllowAnyHeader();
                 });
             });
 
             var app = builder.Build();
 
-            // Configurar el pipeline de solicitudes HTTP
-
-            // Habilitar Swagger en todos los entornos
+            // Middleware
             app.UseSwagger();
             app.UseSwaggerUI();
 
-            // Habilitar CORS
             app.UseCors("AllowAllOrigins");
 
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
 
-            // Mapear controladores
             app.MapControllers();
 
-            // Iniciar la aplicación
-            app.Run();
+            // Render asigna el puerto en la variable de entorno PORT
+            var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+            app.Run($"http://0.0.0.0:{port}");
         }
     }
 }
