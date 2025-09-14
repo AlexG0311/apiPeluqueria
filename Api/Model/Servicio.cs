@@ -4,6 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace Api.Model
 {
+    [Table("servicio")]
     public class Servicio
     {
 

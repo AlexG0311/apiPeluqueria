@@ -59,7 +59,7 @@ namespace Api
 
             app.UseCors("AllowAllOrigins");
 
-          
+            app.UseHttpsRedirection();
 
             app.UseAuthorization();
 
