@@ -3,6 +3,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Api.Model
 {
+
+    [Table("reseñaproducto")]
     public class ReseñaProducto
     {
 

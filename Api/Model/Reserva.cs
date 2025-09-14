@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Api.Model
 {
+    [Table("reserva")]
     public class Reserva
     {
         [Key]

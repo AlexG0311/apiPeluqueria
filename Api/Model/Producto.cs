@@ -4,9 +4,9 @@ using System.Text.Json.Serialization;
 
 namespace Api.Model
 {
-    
 
-        public class Producto
+    [Table("producto")]
+    public class Producto
         {
         [Key]
         public int idProducto { get; set; }

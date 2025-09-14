@@ -4,6 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace Api.Model
 {
+    [Table("empleado")]
     public class Empleado
     {
 

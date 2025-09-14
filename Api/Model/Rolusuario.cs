@@ -3,8 +3,10 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Api.Model
 {
+    [Table("rolusuario")]
     public class Rolusuario
     {
+
 
         [Key]
         public int Rol_idRol { get; set; }

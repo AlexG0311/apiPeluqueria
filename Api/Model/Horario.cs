@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Api.Model
 {
+    [Table("horario")]
     public class Horario
     {
 

@@ -7,6 +7,7 @@ using System.Text.Json.Serialization;
 
 namespace Api.Model
 {
+    [Table("usuario")]
     public class Usuario
     {
             [Key]
