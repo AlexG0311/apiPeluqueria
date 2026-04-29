@@ -178,9 +178,9 @@ namespace Api.Controllers
                     IdUsuario = usuario.idUsuario,
                     IdCliente = (int?)null, // No aplica
                     IdEmpleado = empleado.idEmpleado,
-                    Nombre = usuario.Nombre,
-                    Apellidos = usuario.Apellidos,
-                    Telefono = usuario.Telefono
+                    nombre = usuario.Nombre,
+                    apellidos = usuario.Apellidos,
+                    telefono = usuario.Telefono
                 });
             }
             else if (cliente != null)
@@ -191,9 +191,9 @@ namespace Api.Controllers
                     IdUsuario = usuario.idUsuario,
                     IdCliente = cliente.idCliente,
                     IdEmpleado = (int?)null, // No aplica
-                    Nombre = usuario.Nombre,
-                    Apellidos = usuario.Apellidos,
-                    Telefono = usuario.Telefono
+                    nombre = usuario.Nombre,
+                    apellidos = usuario.Apellidos,
+                    telefono = usuario.Telefono
                 });
             }
             else
