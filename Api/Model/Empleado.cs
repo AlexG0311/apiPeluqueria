@@ -16,6 +16,7 @@ namespace Api.Model
         public Usuario Usuario { get; set; } // Relación con Usuario
 
         // Relación con Reserva (Uno a Muchos)
+        public ICollection<Horario> Horarios { get; set; }
         public ICollection<Reserva> Reservas { get; set; }
 
 

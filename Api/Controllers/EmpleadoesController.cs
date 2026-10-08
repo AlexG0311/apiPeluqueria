@@ -55,7 +55,7 @@ namespace Api.Controllers
         }
 
         // PUT: api/Empleadoes/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+  
         [HttpPut("{id}")]
         public async Task<IActionResult> PutEmpleado(int id, Empleado empleado)
         {
@@ -86,7 +86,7 @@ namespace Api.Controllers
         }
 
         // POST: api/Empleadoes
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+     
         [HttpPost]
         public async Task<ActionResult<Empleado>> PostEmpleado(Empleado empleado)
         {

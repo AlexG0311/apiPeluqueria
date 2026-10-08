@@ -9,16 +9,11 @@ namespace Api.Model
 
         [Key]
         public int idHorario { get; set; }
-        public DateTime DiaMesAño { get; set; }
+        public int Empleado_idEmpleado { get; set; }
+        public string DiaSemana { get; set; }
         public TimeSpan HoraInicio { get; set; }
         public TimeSpan HoraFin { get; set; }
-
-        // Clave foránea hacia Empleado
-        [ForeignKey("Empleado")]
-        public int Empleado_idEmpleado { get; set; }
+        public int Activo { get; set; }
         public Empleado Empleado { get; set; }
-
-        // Relación uno a muchos con Asignacion
-        public ICollection<Asignacion> Asignaciones { get; set; }
     }
 }

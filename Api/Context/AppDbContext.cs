@@ -30,6 +30,7 @@ namespace Api.Context
         public DbSet<Api.Model.Servicio> Servicio { get; set; } = default!;
 
         public DbSet<Api.Model.Reserva> Reserva { get; set; } = default!;
+        public DbSet<Horario> horario { get; set; } = default!;
 
 
 
@@ -128,6 +129,18 @@ namespace Api.Context
                 .WithMany(s => s.Reservas) // Un servicio puede estar asociado a muchas reservas
                 .HasForeignKey(r => r.Servicio_idServicio) // Llave foránea en "Reserva"
                 .HasConstraintName("FK_Reserva_Servicio"); // Nombre de la restricción
+
+            modelBuilder.Entity<Horario>()
+           .HasOne(h => h.Empleado)
+           .WithMany(e => e.Horarios)
+           .HasForeignKey(h => h.Empleado_idEmpleado)
+           .HasConstraintName("FK_Horario_Empleado")
+           .OnDelete(DeleteBehavior.Cascade);
+
+            // 👇 Restricción única: un empleado no repite día
+            modelBuilder.Entity<Horario>()
+                .HasIndex(h => new { h.Empleado_idEmpleado, h.DiaSemana })
+                .IsUnique();
 
         }
       

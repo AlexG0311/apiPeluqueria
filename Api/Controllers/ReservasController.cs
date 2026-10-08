@@ -57,7 +57,6 @@ namespace Api.Controllers
 
 
         // PUT: api/Reservas/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutReserva(int id, Reserva reserva)
         {
@@ -88,7 +87,7 @@ namespace Api.Controllers
         }
 
         // POST: api/Reservas
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+
         [HttpPost]
         public async Task<IActionResult> CrearReserva([FromBody] ReservaDTO crearReservaDto)
         {
@@ -164,19 +163,41 @@ namespace Api.Controllers
                 return NotFound(new { mensaje = "El servicio no existe" });
             }
 
-           
+            // Convertir el día de la fecha al string del ENUM
+            string diaSemana = fecha.DayOfWeek switch
+            {
+                DayOfWeek.Monday => "Lunes",
+                DayOfWeek.Tuesday => "Martes",
+                DayOfWeek.Wednesday => "Miércoles",
+                DayOfWeek.Thursday => "Jueves",
+                DayOfWeek.Friday => "Viernes",
+                DayOfWeek.Saturday => "Sábado",
+                DayOfWeek.Sunday => "Domingo",
+                _ => ""
+            };
+
+
             var empleados = await _context.empleado
-                .Where(e => !e.Reservas.Any(r =>
-                    r.Fecha == fecha &&
-                    hora >= r.Hora &&
-                    hora < r.Hora + servicio.Duracion)) // Usamos servicio.Duracion
-                .Select(e => new EmpleadoDTO
-                {
-                    idEmpleado = e.idEmpleado,
-                    Nombre = e.Usuario.Nombre,
-                    Apellidos = e.Usuario.Apellidos
-                })
-                .ToListAsync();
+           .Where(e =>
+               // ✅ Condición 1: tiene horario ese día y la hora cae dentro
+               e.Horarios.Any(h =>
+                   h.DiaSemana == diaSemana &&
+                   h.Activo == 1 &&
+                   hora >= h.HoraInicio &&
+                   hora + servicio.Duracion <= h.HoraFin)
+               &&
+               // ✅ Condición 2: no tiene una reserva que choque
+               !e.Reservas.Any(r =>
+                   r.Fecha == fecha &&
+                   hora >= r.Hora &&
+                   hora < r.Hora + servicio.Duracion))
+           .Select(e => new EmpleadoDTO
+           {
+               idEmpleado = e.idEmpleado,
+               Nombre = e.Usuario.Nombre,
+               Apellidos = e.Usuario.Apellidos
+           })
+           .ToListAsync();
 
             return Ok(empleados);
         }
