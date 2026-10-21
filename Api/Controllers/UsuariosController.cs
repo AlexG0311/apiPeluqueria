@@ -248,16 +248,6 @@ namespace Api.Controllers
             return CreatedAtAction("GetUsuario", new { id = usuario.idUsuario }, usuario);
         }
 
-
-
-
-
-
-
-
-
-
-
         // DELETE: api/Usuarios/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUsuario(int id)

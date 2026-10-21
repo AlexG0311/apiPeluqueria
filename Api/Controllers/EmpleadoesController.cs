@@ -32,7 +32,7 @@ namespace Api.Controllers
                 {
                     idEmpleado = e.idEmpleado,
                     Usuario_idUsuario = e.Usuario_idUsuario,
-                    NombreUsuario = e.Usuario.Nombre // Obtén el nombre del usuario
+                    NombreUsuario = e.Usuario.Nombre // Obtén el nombre del usuario...
                 })
                 .ToListAsync();
 
