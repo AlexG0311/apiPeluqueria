@@ -24,15 +24,16 @@ namespace Api.Controllers
 
         // GET: api/Empleadoes
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<EmpleadoDTO_>>> GetEmpleados()
+        public async Task<ActionResult<IEnumerable<EmpleadoDTO>>> GetEmpleados()
         {
             var empleados = await _context.empleado
                 .Include(e => e.Usuario) // Incluye la información de la tabla usuario
-                .Select(e => new EmpleadoDTO_
+                .Select(e => new EmpleadoDTO
                 {
                     idEmpleado = e.idEmpleado,
-                    Usuario_idUsuario = e.Usuario_idUsuario,
-                    NombreUsuario = e.Usuario.Nombre // Obtén el nombre del usuario...
+                    Nombre = e.Usuario.Nombre,
+                    Apellidos = e.Usuario.Apellidos,
+                    Correo = e.Usuario.Correo// Obtén el nombre del usuarioo
                 })
                 .ToListAsync();
 
