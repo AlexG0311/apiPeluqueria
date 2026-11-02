@@ -141,9 +141,19 @@ namespace Api.Controllers
         [HttpPost]
         public async Task<IActionResult> CrearReserva([FromBody] ReservaDTO crearReservaDto)
         {
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
+            }
+
+            // Validar que la fecha y hora no sean pasadas
+            var ahora = DateTime.Now;
+            var fechaHoraReserva = crearReservaDto.Fecha.Date + crearReservaDto.Hora;
+
+            if (fechaHoraReserva < ahora)
+            {
+                return BadRequest(new { mensaje = "No se puede crear una reserva en una fecha u hora anterior a la actual." });
             }
 
             // Crea una nueva instancia del modelo Reserva usando los datos del DTO
