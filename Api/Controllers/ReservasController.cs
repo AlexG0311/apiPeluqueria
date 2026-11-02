@@ -29,6 +29,58 @@ namespace Api.Controllers
             return await _context.Reserva.ToListAsync();
         }
 
+        [HttpGet("Cliente/{idCliente}/Proximas")]
+        public async Task<ActionResult<IEnumerable<ReservaDetalleDTO>>> GetProximasPorCliente(int idCliente)
+        {
+            var ahora = DateTime.Now;
+            var hoy = ahora.Date;
+            var horaActual = ahora.TimeOfDay;
+
+            var reservas = await _context.Reserva
+                .Where(r => r.Cliente_idCliente == idCliente &&
+                            (r.Fecha > hoy || (r.Fecha == hoy && r.Hora >= horaActual)))
+                .OrderBy(r => r.Fecha).ThenBy(r => r.Hora)
+                .Select(r => new ReservaDetalleDTO
+                {
+                    idReserva = r.idReserva,
+                    ServicioNombre = r.Servicio.Nombre,
+                    Precio = r.Servicio.Precio,
+                    Fecha = r.Fecha,
+                    Hora = r.Hora,
+                    BarberoNombre = r.Empleado.Usuario.Nombre + " " + r.Empleado.Usuario.Apellidos,
+                    Estado = r.Estado.Descripcion
+                })
+                .ToListAsync();
+
+            return Ok(reservas);
+        }
+
+        [HttpGet("Cliente/{idCliente}/Pasadas")]
+        public async Task<ActionResult<IEnumerable<ReservaDetalleDTO>>> GetPasadasPorCliente(int idCliente)
+        {
+            var ahora = DateTime.Now;
+            var hoy = ahora.Date;
+            var horaActual = ahora.TimeOfDay;
+
+            var reservas = await _context.Reserva
+                .Where(r => r.Cliente_idCliente == idCliente &&
+                            (r.Fecha < hoy || (r.Fecha == hoy && r.Hora < horaActual)))
+                .OrderBy(r => r.Fecha).ThenBy(r => r.Hora)
+                .Select(r => new ReservaDetalleDTO
+                {
+                    idReserva = r.idReserva,
+                    ServicioNombre = r.Servicio.Nombre,
+                    Precio = r.Servicio.Precio,
+                    Fecha = r.Fecha,
+                    Hora = r.Hora,
+                    BarberoNombre = r.Empleado.Usuario.Nombre + " " + r.Empleado.Usuario.Apellidos,
+                    Estado = r.Estado.Descripcion
+                })
+                .ToListAsync();
+
+            return Ok(reservas);
+        }
+
         [HttpGet("Empleado/{idEmpleado}/Reservas")]
         public async Task<IActionResult> GetReservasByEmpleado(int idEmpleado)
         {
@@ -53,8 +105,6 @@ namespace Api.Controllers
 
             return Ok(reservas);
         }
-
-
 
         // PUT: api/Reservas/5
         [HttpPut("{id}")]
@@ -176,17 +226,16 @@ namespace Api.Controllers
                 _ => ""
             };
 
-
             var empleados = await _context.empleado
            .Where(e =>
-               // ✅ Condición 1: tiene horario ese día y la hora cae dentro
+               // Condición 1: tiene horario ese día y la hora cae dentro
                e.Horarios.Any(h =>
                    h.DiaSemana == diaSemana &&
                    h.Activo == 1 &&
                    hora >= h.HoraInicio &&
                    hora + servicio.Duracion <= h.HoraFin)
                &&
-               // ✅ Condición 2: no tiene una reserva que choque
+               // Condición 2: no tiene una reserva que choque
                !e.Reservas.Any(r =>
                    r.Fecha == fecha &&
                    hora >= r.Hora &&
@@ -201,6 +250,5 @@ namespace Api.Controllers
 
             return Ok(empleados);
         }
-
     }
 }
